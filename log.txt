@@ -1,0 +1,9 @@
+Date (D/M/Y): 10/11/21 Time: 21:02:07  Log: hello hey a = 14 c = 16 
+
+Date (D/M/Y): 10/11/21 Time: 21:07:29  Log: hello hey a = 14 c = 16 
+Date (D/M/Y): 10/11/21 Time: 21:07:36  Log: hello hey a = 14 c = 16 
+Date (D/M/Y): 10/11/21 Time: 21:10:42  Log: hello hey a = 14 c = 16 
+Date (D/M/Y): 10/11/21 Time: 21:11:21  Log: hello hey a = 14 c = 16 
+Date (D/M/Y): 10/11/21 Time: 21:11:54  Log: 12 a = 14 msg = logger function in utilities 
+Date (D/M/Y): 10/11/21 Time: 21:13:14  Log: 12 a = 14 msg = logger function in utilities 
+Date (D/M/Y): 10/11/21 Time: 21:14:23  Log: 12 a = 14 msg = logger function in utilities 

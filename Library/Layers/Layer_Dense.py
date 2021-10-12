@@ -1,5 +1,5 @@
 
-from os import name
+
 import numpy as np
 
 class Layer_Dense():

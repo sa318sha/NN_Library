@@ -1,8 +1,8 @@
 
-from Library.Model import Sequential
+from Library.Models.Sequential import Sequential
 from Library.Metrics import metrics
-from Library.Optimizer import Adam, Mini_Batch_Gradient_Descent
-from Library.Layers import Layer_Dense
+from Library.Optimizers.Adam import Adam
+from Library.Layers.Layer_Dense import Layer_Dense
 import numpy as np
 import pandas as pd
 np.random.seed(0)
@@ -15,6 +15,11 @@ np.random.seed(0)
 # learn saving and loading data
 # learn interaction with databases with python
 # learn how to connect js with python or how to build nn on python
+# learn open gym 
+# learn how to use decorators and vlass methods to improve performance
+# mae metrics
+# nicholas renotte has a vid on learning agents with just keras and tensorflow
+# learn how to use classmethods/property and decorators this is huge topic so once im done with neural networks or im happy with my progress
 
 # exponential weighted averages - finished
 # learn more about optimizers - finished
@@ -36,19 +41,18 @@ y = y.to_numpy()
 y = pd.factorize(y)[0]
 # print(type(y))
 breastCancerPredictionModel = Sequential([
-  Layer_Dense(30,100),
-  Layer_Dense(100,50),
-  Layer_Dense(50,20),
+  Layer_Dense(30,20),
   Layer_Dense(20,10),
   Layer_Dense(10,2, 'softmax')
 ])
 
-breastCancerPredictionModel.compile(loss_function= metrics.categorical_crossEntropy, metrics=[metrics.accuracy], optimizer= Adam(0.0001))
+breastCancerPredictionModel.compile(loss_function= metrics.categorical_crossEntropy, metrics=[metrics.accuracy], optimizer= Adam(0.001))
 
 # breastCancerPredictionModel.fit(30,20,X,y,validation_split=0.25)
 
 
 userChoice = -1
+# print('weights',breastCancerPredictionModel.Layers[0].weights)
 while (userChoice != 0 ):
   userChoice = input('\n1. for one iteration\n2. for x amount of iteration\n3. Save weights and biasis\n4. Load Weights and Biasis\n0. To Quit\n')
   if(userChoice == '1'):
@@ -57,7 +61,7 @@ while (userChoice != 0 ):
     breastCancerPredictionModel.fit(1,20,X,y,validation_split=0.25)
 
   if(userChoice == '2'):
-    numberOfIterations = input('\n number of iterations')
+    numberOfIterations = int(input('\nnumber of iterations'))
     breastCancerPredictionModel.fit(numberOfIterations,20,X,y,validation_split=0.25)
 
   if(userChoice == '3'):
