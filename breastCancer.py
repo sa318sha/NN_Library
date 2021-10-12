@@ -46,7 +46,7 @@ breastCancerPredictionModel = Sequential([
   Layer_Dense(10,2, 'softmax')
 ])
 
-breastCancerPredictionModel.compile(loss_function= metrics.categorical_crossEntropy, metrics=[metrics.accuracy], optimizer= Adam(0.001))
+breastCancerPredictionModel.compile(loss_function= metrics.categorical_crossEntropy, metrics=[metrics.accuracy], optimizer= Adam(0.01))
 
 # breastCancerPredictionModel.fit(30,20,X,y,validation_split=0.25)
 

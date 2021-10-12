@@ -54,6 +54,11 @@ class Layer_Dense():
     else:
       print('no optimizer used')
 
+  def backPropogation(self,target,costFunc,output = True):
+    
+    pass
+
+
   def forward(self,inputs):
 
     self.inputs = inputs

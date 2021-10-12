@@ -35,6 +35,7 @@ class Sequential(Model):
     self.output = self.Layers[len(self.Layers)-1].output # may need to change weights to output once forward prop is finished
 
   def backPropogation(self,target):
+    #might want to change backpropogation for each layer and how instead of 
     #propogation attempt 2
     if len(target.shape) == 2:
       target = np.argmax(target,axis=1) # hot encodes the target
@@ -87,6 +88,8 @@ class Sequential(Model):
         else:
           if(layer.activation == 'softmax'):
             pass
+
+
           elif(layer.activation == 'relu'):
 
 
