@@ -1,5 +1,5 @@
 import numpy as np
-from Library.Model import Model
+from Library.Models.Model import Model
 
 class Sequential(Model):
   
@@ -35,90 +35,131 @@ class Sequential(Model):
     self.output = self.Layers[len(self.Layers)-1].output # may need to change weights to output once forward prop is finished
 
   def backPropogation(self,target):
-    #might want to change backpropogation for each layer and how instead of 
-    #propogation attempt 2
-    if len(target.shape) == 2:
-      target = np.argmax(target,axis=1) # hot encodes the target
+    #assume loss is cross entropy
+    delta = np.zeros((self.output.shape))
+    # print('output outside',self.output)
 
-    outputLayer = True
-    count = 0
-    for p in target: 
+    # print('delta before',delta)
+    # print('target',target)
+    # count = 0
+    # for p in target:
+    #   for a in range(delta.shape[1]):
+    #     if (a == p):
+    #       delta[count,p] = -1/self.output[count,a]
+    #     else:
+    #       delta[count,p] = 1
+    #   count+=1
+
+      
+    #   # print(p)
+        
+    
+    # print('delta after', delta)
+    # print(delta)
+    # print(target)
+    output_layer = True
+    count = 1
+    for layer in reversed(self.Layers):
+
+      # if layer.output_layer == True:
+      #   delta = layer.backPropogationOutputLayer
       # print('count',count)
-      # print('target', target)
-      y = p
-      outputLayer = True
-      oldWeights = 0
-      # print(target.shape)
-      oldDelta=0
+      count+=1
+      if output_layer == True:
+        delta = layer.backPropogation(delta,target,output_layer)
+        output_layer = False
+      else:
+        delta = layer.backPropogation(delta)
       
 
-      for layer in reversed(self.Layers):
+      
+
+
+  # def backPropogation(self,target):
+  #   #might want to change backpropogation for each layer and how instead of 
+  #   #propogation attempt 2
+  #   if len(target.shape) == 2:
+  #     target = np.argmax(target,axis=1) # hot encodes the target
+
+  #   outputLayer = True
+  #   count = 0
+  #   for p in target: 
+  #     # print('count',count)
+  #     # print('target', target)
+  #     y = p
+  #     outputLayer = True
+  #     oldWeights = 0
+  #     # print(target.shape)
+  #     oldDelta=0
+      
+
+  #     for layer in reversed(self.Layers):
         
-        delta = np.zeros(layer.weights.shape[0])
-        ChangeInWeight = np.zeros(layer.weights.shape)
-        # print('change in weight', ChangeInWeight)
-        if(outputLayer == True):
-          outputLayer = False
-          if(layer.activation == 'softmax'):
+  #       delta = np.zeros(layer.weights.shape[0])
+  #       ChangeInWeight = np.zeros(layer.weights.shape)
+  #       # print('change in weight', ChangeInWeight)
+  #       if(outputLayer == True):
+  #         outputLayer = False
+  #         if(layer.activation == 'softmax'):
 
 
-            for row in range(layer.weights.shape[0]): #itterates throught the rows
-              if row == y:
-                delta[row] = (layer.output[count,row]-1)
-              elif row != y: 
+  #           for row in range(layer.weights.shape[0]): #itterates throught the rows
+  #             if row == y:
+  #               delta[row] = (layer.output[count,row]-1)
+  #             elif row != y: 
 
-                delta[row] = (layer.output[count,row])
+  #               delta[row] = (layer.output[count,row])
 
-              for column in range(layer.weights.shape[1]):
-                # print(layer.inputs)
-                ChangeInWeight[row,column] = delta[row]*layer.inputs[count,column]
+  #             for column in range(layer.weights.shape[1]):
+  #               # print(layer.inputs)
+  #               ChangeInWeight[row,column] = delta[row]*layer.inputs[count,column]
 
 
-            oldDelta = delta.copy()
-            oldWeights = layer.weights
+  #           oldDelta = delta.copy()
+  #           oldWeights = layer.weights
 
-            layer.weightChanges += ChangeInWeight
-            layer.biasChanges += delta
+  #           layer.weightChanges += ChangeInWeight
+  #           layer.biasChanges += delta
 
             
             
-          elif(layer.activation == 'relu'):
-            pass
+  #         elif(layer.activation == 'relu'):
+  #           pass
           
-        else:
-          if(layer.activation == 'softmax'):
-            pass
+  #       else:
+  #         if(layer.activation == 'softmax'):
+  #           pass
 
 
-          elif(layer.activation == 'relu'):
+  #         elif(layer.activation == 'relu'):
 
 
-            for row in range(layer.weights.shape[0]):
+  #           for row in range(layer.weights.shape[0]):
               
-              sum = np.sum(oldDelta * oldWeights[:,row])
+  #             sum = np.sum(oldDelta * oldWeights[:,row])
 
-              if(layer.zValues[0,row] > 0):
-                delta[row] = sum
+  #             if(layer.zValues[0,row] > 0):
+  #               delta[row] = sum
 
-              elif(layer.zValues[0,row] < 0):
-                delta[row] = 0
+  #             elif(layer.zValues[0,row] < 0):
+  #               delta[row] = 0
 
-              else:
-                delta[row] = sum*1/2
-
-
-
-              for column in range(layer.weights.shape[1]): #there are 4 columns
-
-                ChangeInWeight[row,column] = delta[row] * layer.inputs[count,column]
-
-            layer.weightChanges += ChangeInWeight
-            layer.biasChanges += delta
-            oldWeights = layer.weights
-            oldDelta = delta.copy()
+  #             else:
+  #               delta[row] = sum*1/2
 
 
-          elif(layer.activation == 'sigmoid'):
-            pass
-      count+=1
+
+  #             for column in range(layer.weights.shape[1]): #there are 4 columns
+
+  #               ChangeInWeight[row,column] = delta[row] * layer.inputs[count,column]
+
+  #           layer.weightChanges += ChangeInWeight
+  #           layer.biasChanges += delta
+  #           oldWeights = layer.weights
+  #           oldDelta = delta.copy()
+
+
+  #         elif(layer.activation == 'sigmoid'):
+  #           pass
+  #     count+=1
 

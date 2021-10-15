@@ -1,6 +1,6 @@
 
 from Library.Models.Sequential import Sequential
-from Library.Metrics import metrics
+from Library.metrics.Metrics import metrics
 from Library.Optimizers.Adam import Adam
 from Library.Layers.Layer_Dense import Layer_Dense
 import numpy as np
@@ -46,7 +46,7 @@ breastCancerPredictionModel = Sequential([
   Layer_Dense(10,2, 'softmax')
 ])
 
-breastCancerPredictionModel.compile(loss_function= metrics.categorical_crossEntropy, metrics=[metrics.accuracy], optimizer= Adam(0.01))
+breastCancerPredictionModel.compile(loss_function= metrics.categorical_crossEntropy, metrics=[metrics.accuracy], optimizer= Adam(0.001))
 
 # breastCancerPredictionModel.fit(30,20,X,y,validation_split=0.25)
 

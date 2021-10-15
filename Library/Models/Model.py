@@ -92,6 +92,7 @@ class Model:
       # # want to edit this so onece layer is updated the validation dataset is evaluated and it metrics and loss functions are displayed as well as the training
       self.forward(shuffled_training_input)
       self.loss_value = self.loss_function(self.output,shuffled_training_target)
+      # print(self.metric_values)
       for metric in self.metrics:
         self.metric_values.append(metric(self.output,shuffled_training_target))
       self.evaluation(testing_input,testing_target)
@@ -119,8 +120,9 @@ class Model:
     print('epoch:', epoch+1 if epoch != -1 else 'Final Results')
     print('training loss', np.mean(self.loss_value))
     print('validation loss', np.mean(self.test_loss_value))
+    # print(self.metric_values)
     print('accuracy', np.mean(np.array(self.metric_values)))
     print('validation accuracy', np.mean(np.array(self.test_metric_values)))
     print('----------------------------------------------\n')
-    
+    # self.metric_values = []
 
