@@ -1,5 +1,6 @@
 
 from math import remainder
+from os import pardir
 import numpy as np
 import random
 
@@ -15,6 +16,17 @@ class Model:
   
   def predict(self):
     pass
+  
+  # def params(self):
+  #   parameter = np.array([], dtype=object)
+  #   for layer in self.Layer:
+  #     print('parameter', parameter)
+  #     print('layer wights', layer.weights)
+
+  #     parameter = np.array([parameter,layer.weights],dtype=object)
+  #   print('parameter',parameter)
+  #   return parameter
+
 
   def fit(self,epochs,batch_size,input,target, validation_split = 0.0):
     self.validation_split = validation_split
@@ -63,18 +75,13 @@ class Model:
 
 
       for mini_batch in range(numberOfIterations):
-        print('mini batch',mini_batch)
+        # print('mini batch',mini_batch)
         self.forward(shuffled_training_input[range(startingIndex,startingIndex+batch_size)])
         self.backPropogation(shuffled_training_target[range(startingIndex,startingIndex+batch_size)])
         startingIndex += batch_size
-        for layer in self.Layer:
-          layer.layer_update(batch_size,self.optimizer)
-
-      
+    
       self.forward(shuffled_training_input[range(startingIndex,int(len(training_target)))])
       self.backPropogation(shuffled_training_target[range(startingIndex,int(len(training_target)))])
-      for layer in self.Layer:
-        layer.layer_update((int(len(training_target)-startingIndex)),self.optimizer)
 
       # training_input[range(startingIndex,int(len(training_target)))]
       # for i in range(batch_size):
@@ -108,8 +115,9 @@ class Model:
         self.test_metric_values.append(metric(self.output,testing_target))
 
     
-  def compile(self,loss_function,metrics, optimizer):
-    self.optimizer = optimizer
+  def compile(self,loss_function,metrics):
+
+
 
     self.loss_function = loss_function
     self.metrics = metrics #metrics is stored in an array

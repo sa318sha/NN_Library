@@ -6,74 +6,42 @@ class Sequential(Model):
   def __init__(self,Layers):
     # Layers parameter would ideally be an array ofprev layerswould each Layer
     self.Layers = Layers
-    self.forwardCalled = False
+    # self.forwardCalled = False
     
     for i in Layers:
       print('initialization',i.weights)
     super().__init__(Layers)
-  def testingFunc(self):
-    for layer in self.Layers:
-      # print(layer.weights)
-      pass
-    print(self.learning_rate)
-  
+
   def forward(self,input):
-    temp = input.copy()
-    self.forwardCalled = True
+    self.input  = input
+
     for layer in self.Layers:
 
       layer.forward(input)
       input = layer.output
       self.output = layer.output
   
-    self.input = temp
-
-
-  def getFinalOutput(self):
-    # if(self.forwardCalled == False):
-
-    self.output = self.Layers[len(self.Layers)-1].output # may need to change weights to output once forward prop is finished
-
   def backPropogation(self,target):
-    #assume loss is cross entropy
     delta = np.zeros((self.output.shape))
-    # print('output outside',self.output)
-
-    # print('delta before',delta)
-    # print('target',target)
-    # count = 0
-    # for p in target:
-    #   for a in range(delta.shape[1]):
-    #     if (a == p):
-    #       delta[count,p] = -1/self.output[count,a]
-    #     else:
-    #       delta[count,p] = 1
-    #   count+=1
-
-      
-    #   # print(p)
-        
-    
-    # print('delta after', delta)
-    # print(delta)
-    # print(target)
     output_layer = True
-    count = 1
+    
     for layer in reversed(self.Layers):
 
-      # if layer.output_layer == True:
-      #   delta = layer.backPropogationOutputLayer
-      # print('count',count)
-      count+=1
       if output_layer == True:
         delta = layer.backPropogation(delta,target,output_layer)
         output_layer = False
+        
       else:
         delta = layer.backPropogation(delta)
-      
 
       
 
+      
+
+  # def getFinalOutput(self):
+  #   # if(self.forwardCalled == False):
+
+  #   self.output = self.Layers[len(self.Layers)-1].output # may need to change weights to output once forward prop is finished
 
   # def backPropogation(self,target):
   #   #might want to change backpropogation for each layer and how instead of 
@@ -162,4 +130,10 @@ class Sequential(Model):
   #         elif(layer.activation == 'sigmoid'):
   #           pass
   #     count+=1
+    # def testingFunc(self):
+  #   for layer in self.Layers:
+  #     # print(layer.weights)
+  #     pass
+  #   print(self.learning_rate)
+  
 

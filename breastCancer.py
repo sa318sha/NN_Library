@@ -40,17 +40,19 @@ y = y.to_numpy()
 # print('y new', pd.factorize(y)[0])
 y = pd.factorize(y)[0]
 # print(type(y))
+learning_rate = 0.001
 breastCancerPredictionModel = Sequential([
-  Layer_Dense(30,20),
-  Layer_Dense(20,10),
-  Layer_Dense(10,2, 'softmax')
+  Layer_Dense(30,20, optimizer = Adam(learning_rate)),
+  Layer_Dense(20,10, optimizer = Adam(learning_rate)),
+  Layer_Dense(10,2, activation = 'softmax', optimizer = Adam(learning_rate))
 ])
 
-breastCancerPredictionModel.compile(loss_function= metrics.categorical_crossEntropy, metrics=[metrics.accuracy], optimizer= Adam(0.001))
+
+breastCancerPredictionModel.compile(loss_function= metrics.categorical_crossEntropy, metrics=[metrics.accuracy])
 
 # breastCancerPredictionModel.fit(30,20,X,y,validation_split=0.25)
-
-
+# paramater = breastCancerPredictionModel.params()
+# print('parameters', paramater)
 userChoice = -1
 # print('weights',breastCancerPredictionModel.Layers[0].weights)
 while (userChoice != 0 ):
