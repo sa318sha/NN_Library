@@ -1,11 +1,12 @@
 
 
 import numpy as np
-
+from Library.Optimizers.Optimizer import Optimizer
+from Utilities.Timing.Timer_decorator import non_return_timer, return_timer
 class Convolutional_Layer():
-  def __init__(self,in_channels, out_channels,filterDimensions,stride = 1,padding=True,use_bias = False,activation = None):
+  def __init__(self,in_channels, out_channels,filterDimensions,optimizer = None,padding=True,use_bias = False,activation = None):
     
-    self.stride = stride
+    self.optimizer = optimizer
     self.use_bias = use_bias
     self.in_channels = in_channels
     self.out_channels = out_channels
@@ -24,12 +25,7 @@ class Convolutional_Layer():
     
     self.weightChanges = 0
     self.biasChanges = 0
-    self.V_dW = np.zeros(shape=(self.weights.shape))
-    print('VdW initialized')
-    self.V_dB = np.zeros(shape=(self.biases.shape))
-    self.S_dW = np.zeros(shape=(self.weights.shape))
-    self.S_dB = np.zeros(shape=(self.biases.shape))
-    self.t = 0
+
   
   def set_weights(self,newWeights):
 
@@ -66,30 +62,29 @@ class Convolutional_Layer():
       print('no optimizer used')
 
   def backPropogation(self,delta):
-    
+    print('backpropping convolutional layer')
     delta = self.create_padding(delta)
     # print('padded delta',delta.shape)
     # print('padded image', self.padded_img.shape)
+
     self.weightChanges = np.zeros(self.weights.shape)
     new_delta = np.zeros(self.input.shape)
 
-    print('weight changes', self.weightChanges)
     increment = 0
     for batch in range(delta.shape[0]):
       for in_channels in range(self.in_channels):
+
         # print('bias',delta[batch,in_channels])
         # print('bias ,',np.sum(delta[batch,in_channels]))
         # print('bias shape', self.biases.shape)
         # new_delta[batch,in_channels] = self.weights
 
-        
-
-
-
         for filter in range(self.weightChanges.shape[0]):
+
           for new_delta_row in range(delta.shape[2]-self.filterHeight+1):
             for new_delta_column in range(delta.shape[3]-self.filterWidth+1):
-              new_delta[batch,in_channels,new_delta_row,new_delta_column] += np.sum(self.weights[filter]*delta[batch,in_channels+increment, new_delta_row:new_delta_row+self.filterHeight, new_delta_column:new_delta_column+self.filterWidth])
+          
+              new_delta[batch,in_channels,new_delta_row,new_delta_column] += np.sum(self.weights[filter]*delta[batch,filter+increment, new_delta_row:new_delta_row+self.filterHeight, new_delta_column:new_delta_column+self.filterWidth])
           
           
           # self.biasChanges[0,in_channels+increment] = np.sum
@@ -98,11 +93,11 @@ class Convolutional_Layer():
           for row in range(self.weightChanges.shape[1]):
             for column in range(self.weightChanges.shape[2]):
               #not sure if its the correct fix will need more testing/research
-              self.weightChanges[filter,row,column] = np.sum(self.padded_img[batch,
+              self.weightChanges[filter,row,column] += np.sum(self.padded_img[batch,
                                                               in_channels,
                                                               row : self.paddedHeight - self.filterHeight + 1 + row,
                                                               column : self.paddedWidth - self.filterWidth + 1 + column] * delta[batch,
-                                                              in_channels+increment,
+                                                              filter+increment,
                                                               row : self.paddedHeight - self.filterHeight + 1 + row,
                                                               column : self.paddedWidth - self.filterWidth + 1 + column] )
               # new_delta[batch,in_channels,row,column] = None
@@ -112,10 +107,11 @@ class Convolutional_Layer():
           #     new_delta[batch,in_channels,row,column] = None
         increment += self.numberOfFilters
       increment = 0
+    if(self.optimizer != None):
+      weightChanges, biasChanges = self.optimizer.update(self.weightChanges,self.biasChanges)
+      self.weights -= weightChanges
+      self.biasChanges -= biasChanges
     # print('dimensions')
-    print('weight changes after', self.weightChanges)  
-    print('new delta',new_delta)
-    print('new delta shape', new_delta.shape)
     # print('delta,',delta)
 
     return new_delta
@@ -149,8 +145,9 @@ class Convolutional_Layer():
 
 
     return padded_img
-    
+  @non_return_timer
   def forward(self,image):
+    print('convolutional layer forward')
     self.input = image
     if self.padding == True:
 

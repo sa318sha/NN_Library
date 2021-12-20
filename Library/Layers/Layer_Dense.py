@@ -1,6 +1,7 @@
 from os import error
 import numpy as np
 from Utilities.Logging.Logging_Decorator import return_logger
+from Utilities.Timing.Timer_decorator import non_return_timer
 # fr import Adam, Gradient_Descent,Mini_batch_gradient_descent,Momentum
 
 class Layer_Dense():
@@ -54,19 +55,26 @@ class Layer_Dense():
   #   else:
   #     print('no optimizer used')
 
-  
+  @return_logger
   def backPropogation(self,delta,target = None,output_layer = False):
 
-    
+    # print('dense layer backprop starting')
     new_delta = np.zeros((self.inputs.shape))
-   
+
+
     if (output_layer == True):
       count = 0
       # print('target')
+      # print('target',target,type(target))
+      # print('delta',delta)
+      # print('output', self.output)
+      # print('target shape',target.shape)
+      # print('delta shape', delta.shape)
+
       for p in target:
-
+        # print('p',p)
         for a in range(delta.shape[1]):
-
+          # print('a',a)
           
           if self.activation == 'softmax':
             if(p==a):
@@ -100,14 +108,16 @@ class Layer_Dense():
       # print(self.weights)
       
       # print(self.weights)
-    weightChanges, biasChanges = self.optimizer.update(self.weightChanges,self.biasChanges)
-    self.weights -= weightChanges
-    self.biasChanges -= biasChanges
+    if(self.optimizer != None):
+
+      weightChanges, biasChanges = self.optimizer.update(self.weightChanges,self.biasChanges)
+      self.weights -= weightChanges
+      self.biasChanges -= biasChanges
     return new_delta
 
-       
+  @non_return_timer
   def forward(self,inputs):
-
+    # print('dense layer layer forward')
     self.inputs = inputs
     self.zValues = np.dot(inputs,self.weights.T) + self.biases
 

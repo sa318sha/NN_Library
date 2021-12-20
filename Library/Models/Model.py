@@ -46,7 +46,7 @@ class Model:
     
     
     
-    
+
     numberOfIterations = int(len(training_target)/batch_size)
     remainder = int(len(training_target)%batch_size)
     print('number of iterations',numberOfIterations)
@@ -56,7 +56,7 @@ class Model:
 
 
 
-
+    
     for epoch in range(epochs): #apperently mini batch you do gradient descent for the whole data set but where the batch size is teh data set for the descent 
       
       shuffled_training_input = np.empty(training_input.shape, dtype=training_input.dtype)
@@ -76,10 +76,11 @@ class Model:
 
       for mini_batch in range(numberOfIterations):
         # print('mini batch',mini_batch)
+        print('mini batch',mini_batch)
         self.forward(shuffled_training_input[range(startingIndex,startingIndex+batch_size)])
         self.backPropogation(shuffled_training_target[range(startingIndex,startingIndex+batch_size)])
         startingIndex += batch_size
-    
+      # print('in model checking the input and target respectivly shape', shuffled_training_input.shape,shuffled_training_target.shape)
       self.forward(shuffled_training_input[range(startingIndex,int(len(training_target)))])
       self.backPropogation(shuffled_training_target[range(startingIndex,int(len(training_target)))])
 

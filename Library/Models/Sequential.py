@@ -1,139 +1,125 @@
 import numpy as np
 from Library.Models.Model import Model
+from Utilities.Timing.Timer_decorator import non_return_timer
+
 
 class Sequential(Model):
-  
-  def __init__(self,Layers):
-    # Layers parameter would ideally be an array ofprev layerswould each Layer
-    self.Layers = Layers
-    # self.forwardCalled = False
-    
-    for i in Layers:
-      print('initialization',i.weights)
-    super().__init__(Layers)
 
-  def forward(self,input):
-    self.input  = input
+    def __init__(self, Layers):
+        # Layers parameter would ideally be an array ofprev layerswould each Layer
+        self.Layers = Layers
+        # self.forwardCalled = False
 
-    for layer in self.Layers:
+        super().__init__(Layers)
 
-      layer.forward(input)
-      input = layer.output
-      self.output = layer.output
-  
-  def backPropogation(self,target):
-    delta = np.zeros((self.output.shape))
-    output_layer = True
-    
-    for layer in reversed(self.Layers):
+    def forward(self, input):
+        self.input = input
 
-      if output_layer == True:
-        delta = layer.backPropogation(delta,target,output_layer)
-        output_layer = False
-        
-      else:
-        delta = layer.backPropogation(delta)
+        for layer in self.Layers:
 
-      
+            layer.forward(input)
+            input = layer.output
+            self.output = layer.output
 
-      
+    @non_return_timer
+    def backPropogation(self, target):
+        # print('back propping')
+        delta = np.zeros((self.output.shape))
+        output_layer = True
 
-  # def getFinalOutput(self):
-  #   # if(self.forwardCalled == False):
+        for layer in reversed(self.Layers):
 
-  #   self.output = self.Layers[len(self.Layers)-1].output # may need to change weights to output once forward prop is finished
+            if output_layer == True:
+                delta = layer.backPropogation(delta, target, output_layer)
+                output_layer = False
 
-  # def backPropogation(self,target):
-  #   #might want to change backpropogation for each layer and how instead of 
-  #   #propogation attempt 2
-  #   if len(target.shape) == 2:
-  #     target = np.argmax(target,axis=1) # hot encodes the target
+            else:
+                delta = layer.backPropogation(delta)
 
-  #   outputLayer = True
-  #   count = 0
-  #   for p in target: 
-  #     # print('count',count)
-  #     # print('target', target)
-  #     y = p
-  #     outputLayer = True
-  #     oldWeights = 0
-  #     # print(target.shape)
-  #     oldDelta=0
-      
+    # def getFinalOutput(self):
+    #   # if(self.forwardCalled == False):
 
-  #     for layer in reversed(self.Layers):
-        
-  #       delta = np.zeros(layer.weights.shape[0])
-  #       ChangeInWeight = np.zeros(layer.weights.shape)
-  #       # print('change in weight', ChangeInWeight)
-  #       if(outputLayer == True):
-  #         outputLayer = False
-  #         if(layer.activation == 'softmax'):
+    #   self.output = self.Layers[len(self.Layers)-1].output # may need to change weights to output once forward prop is finished
 
+    # def backPropogation(self,target):
+    #   #might want to change backpropogation for each layer and how instead of
+    #   #propogation attempt 2
+    #   if len(target.shape) == 2:
+    #     target = np.argmax(target,axis=1) # hot encodes the target
 
-  #           for row in range(layer.weights.shape[0]): #itterates throught the rows
-  #             if row == y:
-  #               delta[row] = (layer.output[count,row]-1)
-  #             elif row != y: 
+    #   outputLayer = True
+    #   count = 0
+    #   for p in target:
+    #     # print('count',count)
+    #     # print('target', target)
+    #     y = p
+    #     outputLayer = True
+    #     oldWeights = 0
+    #     # print(target.shape)
+    #     oldDelta=0
 
-  #               delta[row] = (layer.output[count,row])
+    #     for layer in reversed(self.Layers):
 
-  #             for column in range(layer.weights.shape[1]):
-  #               # print(layer.inputs)
-  #               ChangeInWeight[row,column] = delta[row]*layer.inputs[count,column]
+    #       delta = np.zeros(layer.weights.shape[0])
+    #       ChangeInWeight = np.zeros(layer.weights.shape)
+    #       # print('change in weight', ChangeInWeight)
+    #       if(outputLayer == True):
+    #         outputLayer = False
+    #         if(layer.activation == 'softmax'):
 
+    #           for row in range(layer.weights.shape[0]): #itterates throught the rows
+    #             if row == y:
+    #               delta[row] = (layer.output[count,row]-1)
+    #             elif row != y:
 
-  #           oldDelta = delta.copy()
-  #           oldWeights = layer.weights
+    #               delta[row] = (layer.output[count,row])
 
-  #           layer.weightChanges += ChangeInWeight
-  #           layer.biasChanges += delta
+    #             for column in range(layer.weights.shape[1]):
+    #               # print(layer.inputs)
+    #               ChangeInWeight[row,column] = delta[row]*layer.inputs[count,column]
 
-            
-            
-  #         elif(layer.activation == 'relu'):
-  #           pass
-          
-  #       else:
-  #         if(layer.activation == 'softmax'):
-  #           pass
+    #           oldDelta = delta.copy()
+    #           oldWeights = layer.weights
 
+    #           layer.weightChanges += ChangeInWeight
+    #           layer.biasChanges += delta
 
-  #         elif(layer.activation == 'relu'):
+    #         elif(layer.activation == 'relu'):
+    #           pass
 
+    #       else:
+    #         if(layer.activation == 'softmax'):
+    #           pass
 
-  #           for row in range(layer.weights.shape[0]):
-              
-  #             sum = np.sum(oldDelta * oldWeights[:,row])
+    #         elif(layer.activation == 'relu'):
 
-  #             if(layer.zValues[0,row] > 0):
-  #               delta[row] = sum
+    #           for row in range(layer.weights.shape[0]):
 
-  #             elif(layer.zValues[0,row] < 0):
-  #               delta[row] = 0
+    #             sum = np.sum(oldDelta * oldWeights[:,row])
 
-  #             else:
-  #               delta[row] = sum*1/2
+    #             if(layer.zValues[0,row] > 0):
+    #               delta[row] = sum
 
+    #             elif(layer.zValues[0,row] < 0):
+    #               delta[row] = 0
 
+    #             else:
+    #               delta[row] = sum*1/2
 
-  #             for column in range(layer.weights.shape[1]): #there are 4 columns
+    #             for column in range(layer.weights.shape[1]): #there are 4 columns
 
-  #               ChangeInWeight[row,column] = delta[row] * layer.inputs[count,column]
+    #               ChangeInWeight[row,column] = delta[row] * layer.inputs[count,column]
 
-  #           layer.weightChanges += ChangeInWeight
-  #           layer.biasChanges += delta
-  #           oldWeights = layer.weights
-  #           oldDelta = delta.copy()
+    #           layer.weightChanges += ChangeInWeight
+    #           layer.biasChanges += delta
+    #           oldWeights = layer.weights
+    #           oldDelta = delta.copy()
 
-
-  #         elif(layer.activation == 'sigmoid'):
-  #           pass
-  #     count+=1
-    # def testingFunc(self):
-  #   for layer in self.Layers:
-  #     # print(layer.weights)
-  #     pass
-  #   print(self.learning_rate)
-  
-
+    #         elif(layer.activation == 'sigmoid'):
+    #           pass
+    #     count+=1
+        # def testingFunc(self):
+    #   for layer in self.Layers:
+    #     # print(layer.weights)
+    #     pass
+    #   print(self.learning_rate)
