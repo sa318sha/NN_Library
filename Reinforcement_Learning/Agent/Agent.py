@@ -18,9 +18,11 @@ class Agent():
 #             print('explore',explore)
         return np.array([explore]) #explore
 
-      else:       
+      else:      
+        output = policy_network.evaluate(state) 
+        return output
         #this is the epsilon greedy strategy this is the exploit we need to pass in teh states given into the policy network and then return the largest result of the network
-        pass
+        
 
 #         exploit = policy_network(state)
 # #        print('exploit',exploit)
